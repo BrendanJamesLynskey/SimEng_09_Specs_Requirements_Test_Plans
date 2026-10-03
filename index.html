@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Engineering Toolkit 09 — Specifications, Requirements and Test Plans</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Geist+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1c1815;
+            --bg-card: #231e1a;
+            --bg-code: #2b2520;
+            --text-primary: #efe8dc;
+            --text-secondary: #a2978b;
+            --accent: #aabd59;
+            --accent-dim: #aabd5944;
+            --accent-glow: #aabd5933;
+            --border: #3a322b;
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'Geist Mono', 'Geist Mono', monospace;
+            --font-body: 'Instrument Sans', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #dad1c5;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #de805a; }
+        .fn { color: #d7bbdf; }
+        .str { color: #bcdbd4; }
+        .cm { color: #a2978b; font-style: italic; }
+        .num { color: #97cdc6; }
+        .type { color: #e3b174; }
+        .dir { color: #de805a; }
+        .mac { color: #e3b174; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(35,30,26,0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(170,189,89,0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+
+        /* ── Interactive controls (added for Local LLM series) ── */
+        .control-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .control-row label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 180px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: var(--accent);
+        }
+        .control-row input[type="number"],
+        .control-row select {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        .control-row .val {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 80px;
+            text-align: right;
+        }
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.9rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn:hover { background: rgba(170,189,89,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn.secondary {
+            background: var(--bg-code);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .result-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-top: 0.75rem;
+        }
+        .result-box .line-label { color: var(--text-secondary); }
+        .result-box .line-val   { color: var(--accent); font-weight: 600; }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .metric {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+        .metric .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .metric .metric-value {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Canvas / SVG containers */
+        .canvas-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .canvas-wrap canvas,
+        .canvas-wrap svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        /* Small inline badge */
+        .badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            margin-left: 0.3rem;
+        }
+        .badge.ok    { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .badge.warn  { border-color: #e3b174; color: #e3b174; background: rgba(227,177,116,0.08); }
+        .badge.bad   { border-color: #de805a; color: #de805a; background: rgba(222,128,90,0.08); }
+
+
+        /* ── LLM Inference Simulators additions ── */
+        .canvas-wrap canvas { image-rendering: auto; display: block; width: 100%; height: auto; }
+        .canvas-wrap svg { max-width: 100%; height: auto; }
+        .ladder { display: grid; gap: 0.4rem; margin: 1.25rem 0; }
+        .ladder-row {
+            display: grid; grid-template-columns: 11rem 1fr 7.5rem; gap: 0.75rem; align-items: center;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.55rem 0.85rem; font-size: 0.88rem;
+        }
+        .ladder-row .rung { font-family: var(--font-display); font-weight: 600; color: var(--accent); }
+        .ladder-row .speed { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); text-align: right; }
+        .res-list { list-style: none; padding: 0; margin: 0.75rem 0; }
+        .res-list li { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+        .res-list li:last-child { border-bottom: none; }
+        .res-list .what { color: var(--text-secondary); display: block; font-size: 0.86rem; margin-top: 0.15rem; }
+        .res-list a { color: var(--accent); text-decoration: none; }
+        .res-list a:hover { text-decoration: underline; }
+        .qa { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 0.6rem 0; padding: 0.2rem 1rem; }
+        .qa summary { cursor: pointer; padding: 0.6rem 0; font-weight: 600; }
+        .qa p, .qa ul { margin-bottom: 0.75rem; font-size: 0.92rem; }
+        .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.4rem 1.25rem; }
+        .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .chart-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .slide a { color: var(--accent); }
+        @media (max-width: 640px) {
+            .ladder-row { grid-template-columns: 1fr; gap: 0.2rem; }
+            .ladder-row .speed { text-align: left; }
+        }
+        .concepts { background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.75rem 1rem; margin-top: 1.25rem; font-size: 0.88rem; }
+        .concepts p { margin: 0 0 0.4rem; color: var(--text-secondary); }
+        .concepts .chips { display: flex; flex-wrap: wrap; gap: 0.35rem 0.5rem; }
+        .concepts .chips a { border: 1px solid var(--border); border-radius: 999px; padding: 0.1rem 0.6rem; text-decoration: none; font-size: 0.82rem; }
+        .concepts .chips a:hover { border-color: var(--accent); }
+        /* ── Simulation Engineering Toolkit additions ── */
+        .code-header a.src-link { color: var(--text-secondary); text-decoration: none; float: right; }
+        .code-header a.src-link:hover { color: var(--accent); text-decoration: underline; }
+        p.src { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-secondary); margin: -0.75rem 0 1rem; }
+        p.src a { color: var(--text-secondary); }
+        .control-panel select, .control-panel input[type=number] { background: var(--bg-code); color: var(--text-primary); border: 1px solid var(--border); border-radius: 4px; padding: 0.2rem 0.4rem; font-family: var(--font-mono); font-size: 0.8rem; }
+        .mut-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0.4rem 1rem; font-size: 0.85rem; }
+        .mut-grid label { display: flex; gap: 0.5rem; align-items: baseline; cursor: pointer; }
+        .mut-list { font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.7; }
+        .mut-list .killed { color: var(--accent); }
+        .mut-list .survived { color: #de805a; }
+        .hero { overflow: hidden; }   /* the 600px glow must not widen the page on phones */
+        .chart-pair > *, .diagram-grid > *, .sim-grid > * { min-width: 0; }   /* let wide code scroll inside its column */
+        .slide p code, .slide li code, .slide td code { overflow-wrap: anywhere; }
+        .control-panel select { max-width: 100%; }
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Simulation Engineering Toolkit &mdash; Presentation 09</div>
+    <h1>Specifications, Requirements and <span class="accent">Test Plans</span></h1>
+    <p class="subtitle">Writing down what a simulator must do, and proving it does: requirement quality, EARS patterns with an interactive checker, non-functional requirements for simulators, requirements capture for mission-mode software, the V-model, a traceability matrix generated from the test run (which found a real gap), and worked templates for a specification, a test plan and a performance report.</p>
+
+    <div class="tags">
+        <span class="tag">EARS</span>
+        <span class="tag">Requirement quality</span>
+        <span class="tag">Mission mode</span>
+        <span class="tag">V-model</span>
+        <span class="tag">Traceability</span>
+        <span class="tag">Test plans</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Need</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Requirement</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Test</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Trace</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Report</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Sign off</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Why a Simulator Needs a Specification</a></li>
+        <li><a href="#slide-02">What Makes a Good Requirement</a></li>
+        <li><a href="#slide-03">EARS: Five Patterns for Requirements</a></li>
+        <li><a href="#slide-04">Interactive: Check a Requirement</a></li>
+        <li><a href="#slide-05">Functional and Non-Functional Requirements for Simulators</a></li>
+        <li><a href="#slide-06">Requirements Capture for Mission-Mode Software</a></li>
+        <li><a href="#slide-07">The V-Model</a></li>
+        <li><a href="#slide-08">Traceability, Generated From the Test Run</a></li>
+        <li><a href="#slide-09">Template 1: a Simulator Specification</a></li>
+        <li><a href="#slide-10">Template 2: a Test Plan</a></li>
+        <li><a href="#slide-11">Template 3: a Performance Report</a></li>
+        <li><a href="#slide-12">Reviews, Baselines and Sign-Off</a></li>
+        <li><a href="#slide-13">What to Take Away</a></li>
+    </ul>
+    <div class="concepts">
+        <p><strong>Concepts used here, and where they are explained.</strong> Each links to a glossary entry: this <a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#glossary">series glossary</a>, or the glossaries of LLM Inference Simulators and FHE Accelerator Simulators for concepts those series already explain.</p>
+        <div class="chips"><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-reqquality" title="A good requirement is necessary, unambiguous, singular, feasible and verifiable, among the characteristics INCOSE&#x27;s guide and ISO/IEC/IEEE 29148 describe; writing rules ban vague terms, escape and open-ended clauses.">Requirement quality</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-ears" title="The Easy Approach to Requirements Syntax: ubiquitous, event-driven (When), state-driven (While), unwanted-behaviour (If ... then) and optional-feature (Where) patterns, and combinations of them.">EARS</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-verifmethods" title="Each requirement names how it will be verified: test, analysis, inspection or demonstration. A requirement no method could fail is not verifiable.">Verification methods</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-nfr" title="How well a simulator must work: accuracy against a named reference and tolerance, determinism, speed, capacity and stated fidelity boundaries.">Non-functional requirements for simulators</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-missionmode" title="Here: the software that runs on the product in its operational mode, as opposed to test, bring-up, calibration or diagnostic software. Its requirements must capture modes, fault handling and resource budgets.">Mission-mode software</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-vmodel" title="Each level of specification is verified by the level of test opposite it. Verification asks whether it was built right; validation, whether the right thing was built.">The V-model; verification and validation</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-traceability" title="The links from each requirement to the tests and evidence that verify it, checked in both directions; generated from the test run, a missing link is a visible gap.">Traceability matrix</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-testplan" title="A test plan states scope, approach, pass/fail and exit criteria, environment, deliverables and risks; its core is the oracle each level uses to decide that a result is right.">Test plans and test oracles</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-perfreport" title="A report written by a script from recorded runs (question, environment, method, validation, results, limitations), so it can be regenerated after any change.">Generated performance reports</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-correlation" title="Fitting a model&#x27;s few free coefficients to measurements (or RTL), then tracking its error on workloads it was not fitted to. The correlation report is the deliverable that makes predictions trustworthy.">Calibration and correlation</a><a href="https://brendanjameslynskey.github.io/LLM_Hub_Inference_Simulators/#g-differential" title="Requiring two independent implementations to agree exactly on the same input: here the fast path against the baseline, and the browser JavaScript against the Python simulator.">Differential testing</a><a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#g-golden" title="Store the output of a reference run and fail when today&#x27;s differs; re-bless (rewrite the stored output) deliberately, with the diff reviewed alongside the change that caused it.">Golden tests and re-blessing</a></div>
+    </div>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Why a Simulator Needs a Specification</h2>
+    <p>A simulator's answers feed decisions: how many lanes, how much memory bandwidth, whether a design meets its target before silicon exists. Without a written statement of what it must do, and how well, nobody can say whether it is right, only whether it runs. A specification makes "right" checkable:</p>
+    <ul>
+        <li><strong>For its users:</strong> what questions it can answer, at what fidelity, with what error against which reference.</li>
+        <li><strong>For its developers:</strong> what to build and what not to build. "Not modelled" is a requirement too.</li>
+        <li><strong>For verification:</strong> every requirement has a test or other evidence, and the gaps are visible (slide 08).</li>
+    </ul>
+    <p>This deck uses one complete worked example throughout: the specification, test plan and traceability matrix of <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend">Torch_Sim_Frontend</a> (<a href="https://brendanjameslynskey.github.io/SimEng_10_PyTorch_ONNX_Frontends/">deck 10</a>), written for this purpose and kept in its repository. The test-level detail is in <a href="https://brendanjameslynskey.github.io/SimEng_06_Testing_Frameworks/">deck 06</a>.</p>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>What Makes a Good Requirement</h2>
+    <p>INCOSE's <em>Guide to Writing Requirements</em> and ISO/IEC/IEEE 29148 (requirements engineering) describe the same core characteristics. For an individual requirement these include being <strong>necessary</strong>, <strong>appropriate</strong> to its level, <strong>unambiguous</strong>, <strong>complete</strong>, <strong>singular</strong> (one thing), <strong>feasible</strong>, <strong>verifiable</strong>, <strong>correct</strong> and <strong>conforming</strong> to the agreed style. A set of requirements must also be complete and consistent as a whole.</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Writing rule (paraphrased)</th><th>Instead of</th><th>Write</th></tr></thead>
+        <tbody>
+            <tr><td>Structured statement, active voice, one "shall"</td><td>Results shall be written and plotted.</td><td>The simulator shall write the results to <code>results.md</code>.</td></tr>
+            <tr><td>No vague terms</td><td>The model shall be fast and accurate.</td><td>The model shall report bootstrap time within 5% of the RTL reference.</td></tr>
+            <tr><td>No escape clauses</td><td>..., where possible.</td><td>(Decide. If it is optional, use the optional-feature pattern.)</td></tr>
+            <tr><td>No open-ended clauses</td><td>... formats including JSON, CSV, etc.</td><td>... in JSON and in CSV.</td></tr>
+            <tr><td>No superfluous infinitives</td><td>The tool shall be able to trace 70B models.</td><td>The tool shall trace models of up to 71 billion parameters.</td></tr>
+            <tr><td>Measurable</td><td>... with low memory.</td><td>... with a peak resident memory below 2 GB.</td></tr>
+        </tbody>
+    </table></div>
+    <p><strong>Verifiable</strong> is the one engineers break most: if no test, analysis, inspection or demonstration could fail it, it is a wish, not a requirement. Each requirement names its verification method (<strong>T</strong>est, <strong>A</strong>nalysis, <strong>I</strong>nspection, <strong>D</strong>emonstration).</p>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>EARS: Five Patterns for Requirements</h2>
+    <p>The Easy Approach to Requirements Syntax (Mavin, Wilkinson, Harwood and Novak, IEEE RE 2009, <a href="https://doi.org/10.1109/RE.2009.9">doi:10.1109/RE.2009.9</a>) constrains natural language to a few templates. The keyword at the start says what kind of requirement it is, which removes a whole class of ambiguity (<a href="https://alistairmavin.com/ears/">the patterns</a>):</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Pattern</th><th>Template</th><th>From simfront's spec</th></tr></thead>
+        <tbody>
+            <tr><td>Ubiquitous</td><td>The &lt;system&gt; shall &lt;response&gt;</td><td>SF-09: The roofline cost model shall use the same achievable FLOP and byte rates as Disaggregated_Inference_Sim's CostModel for the same device.</td></tr>
+            <tr><td>Event-driven</td><td><strong>When</strong> &lt;trigger&gt;, the &lt;system&gt; shall &lt;response&gt;</td><td>SF-02: When a model is traced on the meta device, the front end shall allocate no parameter storage.</td></tr>
+            <tr><td>State-driven</td><td><strong>While</strong> &lt;precondition&gt;, the &lt;system&gt; shall &lt;response&gt;</td><td>SF-08: While the torch.compile backend is active, the user's program shall produce outputs identical to eager execution.</td></tr>
+            <tr><td>Unwanted behaviour</td><td><strong>If</strong> &lt;trigger&gt;, <strong>then</strong> the &lt;system&gt; shall &lt;response&gt;</td><td>SF-06: If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report.</td></tr>
+            <tr><td>Optional feature</td><td><strong>Where</strong> &lt;feature is included&gt;, the &lt;system&gt; shall &lt;response&gt;</td><td>SF-10: Where the offload cost model is selected, the cost model shall charge a link transfer the first time an operator reads a tensor resident on the other side, and not again.</td></tr>
+            <tr><td>Complex</td><td><strong>While</strong> ..., <strong>when</strong> ..., the &lt;system&gt; shall ...</td><td>While in mission mode, when the link reports an uncorrectable error, the controller shall ... (slide 06)</td></tr>
+        </tbody>
+    </table></div>
+    <p>Unwanted-behaviour requirements are the ones teams forget: they come from asking "what if it goes wrong?" of every event. In simfront that question produced SF-06 (unknown operators) and SF-15 (a library upgrade that changes the arithmetic).</p>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Interactive: Check a Requirement</h2>
+    <p>Type or pick a requirement. The checker names its EARS pattern and flags the problems the writing rules warn about: vague and unmeasurable words, escape and open-ended clauses, superfluous infinitives, passive voice, non-binding verbs and more than one "shall". It is a set of simple patterns, not a judge: a clean result means only that nothing obvious is wrong.</p>
+    <div class="control-panel">
+        <div class="control-row"><label for="rq-p">Example</label><select id="rq-p"></select></div>
+        <div class="control-row" style="display:block"><textarea id="rq-t" rows="3" style="width: 100%; background: var(--bg-code); color: var(--text-primary); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem; font-family: var(--font-mono); font-size: 0.85rem;"></textarea></div>
+        <div class="metric-grid" id="rq-m"></div>
+        <div class="result-box" id="rq-r"></div>
+    </div>
+    <script>
+    (function () {
+        const $ = id => document.getElementById(id);
+        const EXAMPLES = [
+            ['Vague: "fast and accurate"', 'The simulator should be fast and accurate.'],
+            ['Escape and open-ended clauses', 'The model shall support DDR4, HBM, etc. where possible.'],
+            ['Passive, two responses', 'Results shall be written to a file and the plot shall be displayed.'],
+            ['Superfluous infinitive', 'The front end shall be able to trace large models quickly.'],
+            ['Good: event-driven (SF-02)', 'When a model is traced on the meta device, the front end shall allocate no parameter storage.'],
+            ['Good: unwanted behaviour (SF-06)', 'If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report.'],
+            ['Good: measurable (SF-13)', 'The dispatch front end shall capture a Llama-3-8B 2,048-token prefill trace in less than 5 s on the CI machine.'],
+            ['Complex (mission mode)', 'While in mission mode, when the optical link reports an uncorrectable error, the controller shall switch to the redundant link within 10 ms.'],
+        ];
+        EXAMPLES.forEach(([l], i) => $('rq-p').add(new Option(l, i)));
+        const VAGUE = ['fast', 'quick', 'quickly', 'slow', 'efficient', 'efficiently', 'user-friendly', 'easy', 'simple', 'adequate', 'sufficient', 'appropriate', 'robust', 'flexible', 'accurate', 'accurately', 'large', 'small', 'high', 'low', 'minimal', 'maximal', 'optimal', 'reasonable', 'normal', 'typical', 'several', 'some', 'many', 'few', 'recent', 'modern', 'state-of-the-art', 'seamless', 'seamlessly'];
+        const ESCAPE = ['where possible', 'if possible', 'as appropriate', 'as required', 'if necessary', 'where necessary', 'as far as possible', 'to the extent practical', 'if practical'];
+        const OPEN = ['etc', 'and so on', 'including but not limited to', 'such as', 'and/or'];
+        window.checkRequirement = function (text) {
+            const t = text.trim(), lo = t.toLowerCase();
+            let pattern = 'none';
+            if (/^while\b[^,]*,\s*when\b[^,]*,\s*the\b.*\bshall\b/i.test(t)) pattern = 'complex';
+            else if (/^while\b[^,]*,\s*the\b.*\bshall\b/i.test(t)) pattern = 'state-driven';
+            else if (/^when\b[^,]*,\s*the\b.*\bshall\b/i.test(t)) pattern = 'event-driven';
+            else if (/^if\b[^,]*,\s*then\s+the\b.*\bshall\b/i.test(t)) pattern = 'unwanted behaviour';
+            else if (/^where\b[^,]*,\s*the\b.*\bshall\b/i.test(t)) pattern = 'optional feature';
+            else if (/^the\b.*\bshall\b/i.test(t)) pattern = 'ubiquitous';
+            const words = lo.match(/[a-z][a-z-]*/g) || [];
+            const issues = [];
+            const shalls = (lo.match(/\bshall\b/g) || []).length;
+            if (!shalls) issues.push(/\b(should|may|will|must|can)\b/.test(lo) ? 'no "shall": "' + lo.match(/\b(should|may|will|must|can)\b/)[1] + '" is not binding in this style' : 'no "shall"');
+            if (shalls > 1) issues.push(`${shalls} "shall"s: not singular; split it`);
+            const v = [...new Set(words.filter(w => VAGUE.includes(w)))];
+            if (v.length) issues.push('vague or unmeasurable: ' + v.map(w => `"${w}"`).join(', '));
+            ESCAPE.filter(e => lo.includes(e)).forEach(e => issues.push(`escape clause: "${e}"`));
+            OPEN.filter(e => new RegExp('\\b' + e.replace('/', '\\/') + '\\b').test(lo)).forEach(e => issues.push(`open-ended or ambiguous: "${e}"`));
+            if (/\b(be able to|be capable of|be designed to)\b/.test(lo)) issues.push('superfluous infinitive: "' + lo.match(/\b(be able to|be capable of|be designed to)\b/)[1] + '"');
+            if (/\bshall be \w+(ed|en)\b/.test(lo)) issues.push('passive voice: say which system does it');
+            if (/\b(always|never|all|every)\b/.test(lo) && !/\b(for every|every captured|of every|on every)\b/.test(lo)) issues.push('universal qualifier: check it is really meant');
+            if (pattern === 'none') issues.push('no EARS pattern: start with The / When / While / If ... then / Where');
+            return { pattern, issues };
+        };
+        function draw() {
+            const r = window.checkRequirement($('rq-t').value);
+            const m = (l, v) => `<div class="metric"><div class="metric-label">${l}</div><div class="metric-value">${v}</div></div>`;
+            $('rq-m').innerHTML = m('EARS pattern', r.pattern) + m('Issues found', r.issues.length);
+            $('rq-r').innerHTML = r.issues.length ? '<ul>' + r.issues.map(i => `<li>${i}</li>`).join('') + '</ul>'
+                : 'Nothing obvious is wrong. Now ask whether it is necessary, feasible and verifiable, and which test will verify it.';
+        }
+        $('rq-p').addEventListener('input', () => { $('rq-t').value = EXAMPLES[+$('rq-p').value][1]; draw(); });
+        $('rq-t').addEventListener('input', draw);
+        $('rq-t').value = EXAMPLES[0][1];
+        draw();
+    })();
+    </script>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>Functional and Non-Functional Requirements for Simulators</h2>
+    <p><strong>Functional</strong> requirements say what the simulator does: which components and behaviours it models, which inputs it accepts, which outputs it produces. <strong>Non-functional</strong> requirements say how well, and for a simulator they carry most of the value:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Quality</th><th>Requirement shape</th><th>Evidence in this series</th></tr></thead>
+        <tbody>
+            <tr><td>Accuracy</td><td>Metric X within tolerance T of reference R, on workloads W</td><td>SystemC model against the SimPy model, op by op (<a href="https://brendanjameslynskey.github.io/SimEng_03_SystemC_TLM_Models/#slide-09">deck 03</a>); memsim against DRAMsim3 (<a href="https://brendanjameslynskey.github.io/SimEng_04_Memory_Systems_DRAM_HBM/">deck 04</a>)</td></tr>
+            <tr><td>Determinism</td><td>The same inputs and seed shall give bit-identical outputs</td><td>The Rust port, bit-exact against Python (<a href="https://brendanjameslynskey.github.io/SimEng_02_Rust_Python_PyO3/">deck 02</a>)</td></tr>
+            <tr><td>Performance</td><td>At least N simulated events per second on machine M</td><td>Rust_DES_Kernel's criterion gate (<a href="https://brendanjameslynskey.github.io/SimEng_07_Jenkins_for_Simulation_Teams/#slide-08">deck 07</a>)</td></tr>
+            <tr><td>Capacity</td><td>Models up to size S within memory B</td><td>SF-14: every reference model traced within 2 GB</td></tr>
+            <tr><td>Fidelity boundaries</td><td>What is <em>not</em> modelled, stated as scope</td><td>Every repository's "Not modelled" section</td></tr>
+            <tr><td>Maintainability</td><td>A change to X shall fail CI if it changes Y</td><td>SF-15; the cycle-count and behaviour gates</td></tr>
+        </tbody>
+    </table></div>
+    <p>An accuracy requirement without a named reference and tolerance is unverifiable. Writing it forces the important conversation early: "accurate against <em>what</em>, and how close is close enough for the decision this supports?"</p>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Requirements Capture for Mission-Mode Software</h2>
+    <p>Usage varies between organisations, so define the term before using it. Here, <strong>mission-mode software</strong> means the software that runs on the product in its operational mode, doing the job the product exists for. That is as opposed to the test, bring-up, calibration, diagnostic and manufacturing software that runs on the same hardware at other times. Its requirements are captured differently because the stakes, the environment and the evidence expected are different:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Concern</th><th>Bring-up and test software</th><th>Mission-mode software</th></tr></thead>
+        <tbody>
+            <tr><td>Who depends on it</td><td>Engineers in the lab</td><td>Customers and their systems, unattended</td></tr>
+            <tr><td>Modes</td><td>Often one, entered by hand</td><td>Explicit modes and transitions: state-driven requirements (<em>While in mission mode, ...</em>)</td></tr>
+            <tr><td>Faults</td><td>Stop and report</td><td>Detect, contain, recover or degrade gracefully: unwanted-behaviour requirements for each failure</td></tr>
+            <tr><td>Timing and resources</td><td>Best effort</td><td>Budgets: latency, memory, power, with margins</td></tr>
+            <tr><td>Evidence</td><td>It works on the bench</td><td>Traceability from each requirement to verification, and in regulated domains a process standard</td></tr>
+        </tbody>
+    </table></div>
+    <ul>
+        <li><strong>Capture techniques:</strong> operational scenarios (a concept of operations), a mode and state diagram, interface control documents for every boundary, and a hazard or failure analysis whose results become unwanted-behaviour requirements.</li>
+        <li><strong>Where a simulator helps:</strong> mission-mode requirements on timing and throughput can be checked on a model (a virtual platform or a performance model) long before silicon. The simulator then needs requirements of its own, at the fidelity those checks depend on.</li>
+        <li>Regulated domains add standards that specify the process (for example DO-178C in airborne software, ISO 26262 in road vehicles, IEC 61508 for functional safety generally). Which one applies, if any, depends on the product.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>The V-Model</h2>
+    <div class="canvas-wrap">
+        <svg viewBox="0 0 720 240" width="720" height="240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The V-model: on the left, from top to bottom, user needs, system requirements, architecture and component design, then implementation at the bottom; on the right, from bottom to top, unit tests, integration tests, system verification and validation; dashed lines join each level across the V">
+            <style>
+                .v1 { fill: #2b2520; stroke: #aabd59; stroke-width: 1.5; }
+                .v2 { fill: #2b2520; stroke: #97cdc6; stroke-width: 1.5; }
+                .v3 { fill: #2b2520; stroke: #e3b174; stroke-width: 1.5; }
+                .vt { fill: #efe8dc; font-family: 'Geist Mono', monospace; font-size: 11px; }
+                .vd { fill: #a2978b; font-family: 'Geist Mono', monospace; font-size: 10px; }
+                .vl { stroke: #3a322b; stroke-width: 1.2; stroke-dasharray: 5 4; }
+                .va { stroke: #a2978b; stroke-width: 1.3; fill: none; }
+            </style>
+            <rect x="10" y="10" width="190" height="36" rx="6" class="v1"/><text x="20" y="32" class="vt">user needs</text>
+            <rect x="60" y="62" width="190" height="36" rx="6" class="v1"/><text x="70" y="84" class="vt">requirements (spec.md)</text>
+            <rect x="110" y="114" width="190" height="36" rx="6" class="v1"/><text x="120" y="136" class="vt">design</text>
+            <rect x="265" y="180" width="190" height="36" rx="6" class="v3"/><text x="300" y="202" class="vt">implementation</text>
+            <rect x="420" y="114" width="190" height="36" rx="6" class="v2"/><text x="430" y="136" class="vt">unit tests (rules)</text>
+            <rect x="470" y="62" width="200" height="36" rx="6" class="v2"/><text x="480" y="84" class="vt">system tests (routes)</text>
+            <rect x="520" y="10" width="190" height="36" rx="6" class="v2"/><text x="530" y="32" class="vt">validation</text>
+            <path d="M200,28 L520,28 M250,80 L470,80 M300,132 L420,132" class="vl"/>
+            <path d="M105,46 L120,62 M155,98 L170,114 M205,150 L265,190 M455,190 L515,150 M565,114 L580,98 M620,62 L625,46" class="va"/>
+            <text x="250" y="22" class="vd">validation: does it answer the right question?</text>
+            <text x="300" y="74" class="vd">verification: traceability matrix</text>
+            <text x="320" y="126" class="vd">unit tests</text>
+        </svg>
+    </div>
+    <ul>
+        <li><strong>Each level on the left is verified by the level opposite it on the right.</strong> Requirements are verified by system tests; needs are validated by users with real workloads. Writing the right-hand plan when the left-hand document is written is the point: a requirement nobody can test shows up immediately.</li>
+        <li><strong>Verification</strong> asks "did we build it right?" (against the spec); <strong>validation</strong> asks "did we build the right thing?" (against the need). A simulator can pass every test and still answer the wrong question.</li>
+        <li>Iterative teams still use the V, once per increment: each release's spec, tests and matrix move together.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Traceability, Generated From the Test Run</h2>
+    <p>simfront's tests name the requirements they verify (<code>@pytest.mark.req("SF-04")</code>). <code>ci/trace_matrix.py</code> runs the suite in-process, collects each test's markers and outcome, joins them to the requirement table in <code>docs/spec.md</code> and writes <code>docs/traceability.md</code>. It checks both directions: every requirement has a passing test, and every test traces to a requirement or is listed as untraced.</p>
+    <div class="code-block">
+        <div class="code-header">ci/trace_matrix.py: one row per requirement <a class="src-link" href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/ci/trace_matrix.py">source</a></div>
+        <pre><code><span class="kw">for</span> r <span class="kw">in</span> reqs:
+    tests = by_req.<span class="fn">get</span>(r[<span class="str">"id"</span>], [])
+    <span class="kw">if</span> r[<span class="str">"method"</span>].<span class="fn">startswith</span>(<span class="str">"T"</span>):
+        res = [col.outcome.<span class="fn">get</span>(t, <span class="str">"not run"</span>) <span class="kw">for</span> t <span class="kw">in</span> tests]
+        ok = <span class="fn">bool</span>(tests) <span class="kw">and</span> <span class="fn">all</span>(x == <span class="str">"passed"</span> <span class="kw">for</span> x <span class="kw">in</span> res)
+        gaps += <span class="kw">not</span> ok
+        names = <span class="str">"&lt;br&gt;"</span>.<span class="fn">join</span>(f<span class="str">"`{t.split('/')[-1]}`"</span> <span class="kw">for</span> t <span class="kw">in</span> tests) <span class="kw">or</span> <span class="str">"**no test**"</span>
+        verdict = f<span class="str">"{sum(x == 'passed' for x in res)}/{len(tests)} passed"</span> <span class="kw">if</span> tests <span class="kw">else</span> <span class="str">"**GAP**"</span>
+    <span class="kw">else</span>:
+        names, verdict = <span class="fn">demonstration_evidence</span>(r), <span class="str">"demonstrated"</span>
+    lines.<span class="fn">append</span>(f<span class="str">"| **{r['id']}** {r['text']} | {r['pattern']} | {r['method']} | {names} | {verdict} |"</span>)</code></pre>
+    </div>
+    <div class="table-wrap"><table>
+<thead><tr><th>Requirement</th><th>Pattern</th><th>Method</th><th>Verified by</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td><strong>SF-01</strong> The front end shall record, for every captured operator, the shape, element size and identity of each input and output tensor and whether it is a model parameter.</td><td>Ubiquitous</td><td>T</td><td><code>test_real_models.py::test_llama3_8b_trace_shapes</code>&lt;br&gt;<code>test_trace.py::test_json_round_trip</code></td><td>2/2 passed</td></tr>
+<tr><td><strong>SF-02</strong> When a model is traced on the meta device, the front end shall allocate no parameter storage.</td><td>Event-driven</td><td>T</td><td><code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-8b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-70b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[mistral-7b]</code></td><td>3/3 passed</td></tr>
+<tr><td><strong>SF-03</strong> For SwiGLU decoder configurations, the traced weight-matmul FLOPs of a prefill shall equal 2 × matmul parameters × tokens exactly.</td><td>Ubiquitous</td><td>T</td><td><code>test_properties.py::test_traced_matmul_flops_equal_closed_form</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-8b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-70b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[mistral-7b]</code>&lt;br&gt;<code>test_real_models.py::test_qwen_biases_are_counted</code>&lt;br&gt;<code>test_real_models.py::test_matches_pytorch_flop_counter</code></td><td>6/6 passed</td></tr>
+<tr><td><strong>SF-04</strong> The four front ends shall report identical matmul FLOPs and weight bytes for the same model and input, apart from constant folding that is documented per case.</td><td>Ubiquitous</td><td>T</td><td><code>test_real_models.py::test_fake_cpu_gives_fused_attention_with_the_same_arithmetic</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_flops_and_weights[llama]</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_flops_and_weights[gpt2]</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_the_meta_device</code></td><td>4/4 passed</td></tr>
+<tr><td><strong>SF-05</strong> When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the self-attention term (4 × layers × d_model per token).</td><td>Event-driven</td><td>T</td><td><code>test_real_models.py::test_decode_step_matches_closed_form_plus_self_attention</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-06</strong> If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report.</td><td>Unwanted behaviour</td><td>T</td><td><code>test_coverage.py::test_unknown_operator_is_reported</code>&lt;br&gt;<code>test_coverage.py::test_rule_coverage_of_real_traces_is_complete</code>&lt;br&gt;<code>test_rules.py::test_unknown_ops_are_zero_and_visible</code></td><td>3/3 passed</td></tr>
+<tr><td><strong>SF-07</strong> When a model is exported to ONNX without weights, the front end shall recover the shape and parameter identity of every weight.</td><td>Event-driven</td><td>T</td><td><code>test_routes.py::test_onnx_export_runs_in_onnxruntime_and_matches_pytorch</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-08</strong> While the <code>torch.compile</code> backend is active, the user's program shall produce outputs identical to eager execution.</td><td>State-driven</td><td>T</td><td><code>test_routes.py::test_compile_backend_returns_correct_outputs</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-09</strong> The roofline cost model shall use the same achievable FLOP and byte rates as Disaggregated_Inference_Sim's <code>CostModel</code> for the same device.</td><td>Ubiquitous</td><td>T</td><td><code>test_cost.py::test_from_device_uses_the_inference_simulators_rates</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-10</strong> Where the offload cost model is selected, the cost model shall charge a link transfer the first time an operator reads a tensor resident on the other side, and not again.</td><td>Optional feature</td><td>T</td><td><code>test_cost.py::test_offload_with_everything_supported_is_the_roofline</code>&lt;br&gt;<code>test_cost.py::test_offload_moves_each_tensor_once_per_side</code></td><td>2/2 passed</td></tr>
+<tr><td><strong>SF-11</strong> When a model without data-dependent Python control flow is traced under fake tensors, the front end shall record the same operator sequence and shapes as a run with real tensors.</td><td>Event-driven</td><td>T</td><td><code>test_routes.py::test_fake_tensors_trace_exactly_what_real_tensors_run</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-12</strong> The front end shall report operator coverage by operator count, FLOPs and time.</td><td>Ubiquitous</td><td>T</td><td><code>test_coverage.py::test_device_coverage_three_ways</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-13</strong> The dispatch front end shall capture a Llama-3-8B 2,048-token prefill trace in less than 5 s on the CI machine.</td><td>Ubiquitous</td><td>T</td><td><code>test_gate.py::test_gate_fails_when_capture_slows_down</code>&lt;br&gt;<code>test_real_models.py::test_capture_of_llama3_8b_prefill_is_fast</code></td><td>2/2 passed</td></tr>
+<tr><td><strong>SF-14</strong> The front end shall trace every reference model with a peak resident memory below 2 GB.</td><td>Ubiquitous</td><td>D (<code>results.md</code>)</td><td><code>examples/results.md</code>: peak resident memory 647 MB</td><td>demonstrated</td></tr>
+<tr><td><strong>SF-15</strong> If a library upgrade changes the traced FLOPs or weight bytes of a reference trace, then CI shall fail.</td><td>Unwanted behaviour</td><td>T</td><td><code>test_gate.py::test_gate_fails_on_an_arithmetic_change_and_tolerates_drift</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-16</strong> The front end shall run on a CPU-only machine with no GPU and no model weights.</td><td>Ubiquitous</td><td>D (GitHub Actions)</td><td>GitHub Actions runs the whole suite on <code>ubuntu-24.04</code> runners with CPU-only PyTorch</td><td>demonstrated</td></tr>
+<tr><td><strong>SF-17</strong> The cost rules shall count each operator's FLOPs and bytes by the conventions stated in <code>rules.py</code> and <code>cost.py</code>.</td><td>Ubiquitous</td><td>T</td><td><code>test_cost.py::test_roofline_is_max_of_compute_and_memory_per_op</code>&lt;br&gt;<code>test_cost.py::test_fused_bound_is_below_unfused</code>&lt;br&gt;<code>test_cost.py::test_faster_hardware_is_never_slower</code>&lt;br&gt;<code>test_rules.py::test_mm_is_two_mkn</code>&lt;br&gt;<code>test_rules.py::test_bmm_addmm_linear_conv</code>&lt;br&gt;<code>test_rules.py::test_fused_attention_counts_qk_av_and_softmax</code>&lt;br&gt;<code>test_rules.py::test_views_are_free_and_copies_are_not</code>&lt;br&gt;<code>test_rules.py::test_elementwise_reduction_softmax</code>&lt;br&gt;<code>test_rules.py::test_embedding_reads_rows_not_the_table</code>&lt;br&gt;<code>test_rules.py::test_onnx_rules</code></td><td>10/10 passed</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/docs/traceability.md">docs/traceability.md</a> in Torch_Sim_Frontend</p>
+    <div class="callout">
+        <div class="callout-label">Its first run found a real gap</div>
+        <p>SF-15 ("if a library upgrade changes the traced FLOPs or weight bytes of a reference trace, then CI shall fail") was claimed by the CI gate, with the method "T (CI gate)". The matrix reported <strong>GAP</strong>: nothing tested that the gate actually fails. <code>tests/test_gate.py</code> now changes one FLOP in a copy of the baseline and checks the gate's verdict. The spec's change history records the change of method (version 1.1).</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Template 1: a Simulator Specification</h2>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Section</th><th>Contents</th><th>In simfront's spec</th></tr></thead>
+        <tbody>
+            <tr><td>1. Scope</td><td>What the simulator is for, which decisions it informs, who uses it, what it is not</td><td>"A design-exploration tool ... not mission-mode software"</td></tr>
+            <tr><td>2. Definitions</td><td>Every term a requirement relies on; the references accuracy is measured against</td><td>Trace, front end, weight bytes, closed form, reference models</td></tr>
+            <tr><td>3. Requirements</td><td>ID, type, EARS pattern, text, verification method; one table</td><td>SF-01 to SF-17</td></tr>
+            <tr><td>4. Fidelity</td><td>What is modelled, at what abstraction; what is not</td><td>In the README's "Not modelled"</td></tr>
+            <tr><td>5. Assumptions and constraints</td><td>Versions, platforms, input limits</td><td>PyTorch 2.6+, batch-1 static shapes</td></tr>
+            <tr><td>6. Change history</td><td>Every change, with its reason</td><td>1.1: SF-15's method changed after the gap</td></tr>
+        </tbody>
+    </table></div>
+    <p>The requirements table, as written (excerpt):</p>
+    <div class="code-block">
+        <div class="code-header">docs/spec.md <a class="src-link" href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/docs/spec.md">source</a></div>
+        <pre><code>| ID | Type | Pattern | Requirement | Verification |
+|---|---|---|---|---|
+| SF-<span class="num">01</span> | Functional | Ubiquitous | The front end shall record, for every captured operator, the shape, element size and identity of each input and output tensor and whether it is a model parameter. | T |
+| SF-<span class="num">02</span> | Functional | Event-driven | When a model is traced on the meta device, the front end shall allocate no parameter storage. | T |
+| SF-<span class="num">03</span> | Functional | Ubiquitous | For SwiGLU decoder configurations, the traced weight-matmul FLOPs of a prefill shall equal <span class="num">2</span> × matmul parameters × tokens exactly. | T |
+| SF-<span class="num">04</span> | Functional | Ubiquitous | The four front ends shall report identical matmul FLOPs and weight bytes for the same model and input, apart from constant folding that is documented per case. | T |
+| SF-<span class="num">05</span> | Functional | Event-driven | When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the self-attention term (<span class="num">4</span> × layers × d_model per token). | T |
+| SF-<span class="num">06</span> | Functional | Unwanted behaviour | If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report. | T |</code></pre>
+    </div>
+    <p>A row per requirement, in a file under version control next to the code, reviewed in the same pull request as the change it describes.</p>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Template 2: a Test Plan</h2>
+    <p>A test plan says what will be tested, how a result is judged right, and when testing is finished. Its sections follow the usual contents (as in ISO/IEC/IEEE 29119-3), cut to what a small tool needs: test items and scope; approach; pass/fail criteria; entry and exit criteria; environment; deliverables; risks. The approach is the heart of it, because <strong>a test is only as good as its oracle</strong>, and each level here uses one that shares no code with what it checks:</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Level</th><th>What is tested</th><th>Oracle</th><th>Requirements</th></tr></thead>
+<tbody>
+<tr><td>Unit</td><td>Each cost rule</td><td>FLOP and byte counts worked by hand</td><td>SF-06, SF-17</td></tr>
+<tr><td>Unit (property)</td><td>Rules and cost models for any input</td><td>Invariants: 2MKN; faster hardware is never slower</td><td>SF-17</td></tr>
+<tr><td>Integration</td><td>Each front end on real configurations</td><td>Disaggregated_Inference_Sim's closed forms; PyTorch's <code>FlopCounterMode</code></td><td>SF-02, SF-03, SF-05</td></tr>
+<tr><td>Integration (property)</td><td>Random Llama-shaped configs, lengths, batches</td><td>The closed form, exactly (Hypothesis)</td><td>SF-03</td></tr>
+<tr><td>Differential</td><td>The four front ends against each other</td><td>Each other: they must agree</td><td>SF-04, SF-07</td></tr>
+<tr><td>Faithfulness</td><td>Fake tensors and the compile backend</td><td>A real run with data; eager outputs</td><td>SF-08, SF-11</td></tr>
+<tr><td>External</td><td>The exported ONNX model</td><td>ONNX Runtime's outputs against PyTorch's</td><td>SF-07</td></tr>
+<tr><td>System</td><td>CLI, gate, traceability</td><td>Expected text; the gate's own failure cases</td><td>SF-13, SF-15</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/docs/test_plan.md">docs/test_plan.md</a> in Torch_Sim_Frontend</p>
+    <ul>
+        <li><strong>Exit criteria are measurable:</strong> all tests pass on two Python versions; the gate passes; the traceability matrix has no gaps.</li>
+        <li><strong>Risks name their mitigation:</strong> for example, "a PyTorch upgrade changes the decomposition" is mitigated by a gate that separates arithmetic (fails) from operator-count drift (reported).</li>
+    </ul>
+    <p class="src">Full plan: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/docs/test_plan.md">docs/test_plan.md</a>.</p>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>Template 3: a Performance Report</h2>
+    <p>Every code repository in this series has one: <code>examples/results.md</code>, written by <code>examples/results.py</code>, which is the only source of the numbers in its README and decks. The structure generalises to any simulation study:</p>
+    <div class="table-wrap"><table>
+        <thead><tr><th>Section</th><th>Contents</th><th>Example</th></tr></thead>
+        <tbody>
+            <tr><td>Question</td><td>The decision the study informs</td><td>"Does a matmul-only engine need more operator coverage?"</td></tr>
+            <tr><td>Environment</td><td>Versions, machine, commit: enough to reproduce</td><td>simfront results.md §1, with the commit hash</td></tr>
+            <tr><td>Method and configuration</td><td>Model, workload, parameters; what is illustrative</td><td>"Device numbers ... are datasheet-level or illustrative, as labelled"</td></tr>
+            <tr><td>Validation</td><td>Why the model can be trusted for this question</td><td>§4: the trace against the closed form; §7: against FlopCounterMode</td></tr>
+            <tr><td>Results</td><td>Tables and charts, with spread where there is noise</td><td>§6: coverage counted by operators, FLOPs and time</td></tr>
+            <tr><td>Limitations</td><td>What could change the conclusion</td><td>"Not modelled" plus the counting conventions</td></tr>
+        </tbody>
+    </table></div>
+    <p>The environment section from simfront's report, generated, never typed:</p>
+    <div class="table-wrap"><table>
+<thead><tr><th>Item</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Python</td><td>3.12.12</td></tr>
+<tr><td>PyTorch</td><td>2.14.1+cpu</td></tr>
+<tr><td>transformers</td><td>5.18.0</td></tr>
+<tr><td>onnx</td><td>1.23.1</td></tr>
+<tr><td>CPU</td><td>x86_64</td></tr>
+<tr><td>simfront commit</td><td>67f36ee</td></tr>
+</tbody></table></div>
+    <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/examples/results.md">examples/results.md</a> in Torch_Sim_Frontend</p>
+    <p>A report generated by a script can be regenerated after any model change, which is what keeps the numbers in decks and READMEs true. Timing results also need repeat runs and a statement of spread (<a href="https://brendanjameslynskey.github.io/SimEng_11_Performance_Analysis/">deck 11</a>).</p>
+</section>
+
+<section class="slide" id="slide-12">
+    <div class="slide-number">12</div>
+    <h2>Reviews, Baselines and Sign-Off</h2>
+    <ul>
+        <li><strong>Review requirements like code:</strong> in a pull request, against a checklist (the characteristics on slide 02, the rules the checker on slide 04 approximates), by someone who will have to verify them.</li>
+        <li><strong>Baseline</strong> the spec at a version once agreed; change it only through the same review, recording why in its change history. Tag the spec, the tests and the matrix together at each release.</li>
+        <li><strong>Sign-off</strong> is a decision on evidence: the matrix with no gaps, the test and gate results from the release build, the accuracy against references, the open issues each with a stated impact (<a href="https://brendanjameslynskey.github.io/SimEng_08_Jira_and_Engineering_Metrics/#slide-11">deck 08</a>).</li>
+        <li><strong>Who signs</strong> depends on what the simulator feeds: a study that informs a tape-out decision deserves the same rigour as the RTL sign-off it shortcuts.</li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-13">
+    <div class="slide-number">13</div>
+    <h2>What to Take Away</h2>
+    <ul>
+        <li><strong>Write requirements to be verified:</strong> singular, measurable, with a method. EARS's five patterns make the trigger and the state explicit.</li>
+        <li><strong>For simulators the non-functional requirements carry the value:</strong> accuracy against a named reference and tolerance, determinism, speed, capacity, and the fidelity boundaries.</li>
+        <li><strong>Mission-mode software</strong> (defined carefully) needs modes, fault handling and budgets captured as requirements, and evidence for each.</li>
+        <li><strong>Generate the traceability matrix from the test run.</strong> Its first run here found a real gap.</li>
+        <li><strong>Plans name their oracles; reports are generated by scripts.</strong></li>
+    </ul>
+    <ul class="res-list">
+        <li><a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/tree/main/docs">Torch_Sim_Frontend/docs</a><span class="what">The specification, the test plan and the generated traceability matrix used throughout.</span></li>
+        <li><a href="https://alistairmavin.com/ears/">EARS</a><span class="what">The patterns, with examples, from one of their authors.</span></li>
+        <li><a href="https://brendanjameslynskey.github.io/InfSim_06_Metrics_Hotspots_Validation/">LLM Inference Simulators 06</a><span class="what">Validation against references, in depth.</span></li>
+        <li><a href="https://github.com/BrendanJamesLynskey/Interview_Software_Testing">Interview_Software_Testing</a><span class="what">Testing interview questions, including test planning.</span></li>
+    </ul>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/SimEng_Hub_Toolkit">Simulation Engineering Toolkit series</a> &middot; <a href="https://brendanjameslynskey.github.io/SimEng_Hub_Toolkit/#glossary">glossary: every concept and where it is explained</a> &middot; code: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend">Torch_Sim_Frontend</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://brendanjameslynskey.github.io/SimEng_08_Jira_and_Engineering_Metrics/">&larr; 08 Jira and Engineering Metrics</a> &nbsp;&middot;&nbsp; <a href="https://brendanjameslynskey.github.io/SimEng_10_PyTorch_ONNX_Frontends/">10 From PyTorch and ONNX to an Accelerator Model &rarr;</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Interview questions: <a href="https://github.com/BrendanJamesLynskey/Interview_Software_Testing">Interview_Software_Testing</a> &middot; <a href="https://github.com/BrendanJamesLynskey/Interview_Technical_Leadership">Interview_Technical_Leadership</a> &middot; sister series: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Inference_Simulators">LLM Inference Simulators</a> &middot; <a href="https://github.com/BrendanJamesLynskey/FHE_Hub_Accelerator_Simulators">FHE Accelerator Simulators</a></p>
+</footer>
+
+<script>
+    // Smooth scroll for TOC links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Subtle fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>
