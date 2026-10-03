@@ -1072,7 +1072,7 @@
 <tr><td><strong>SF-02</strong> When a model is traced on the meta device, the front end shall allocate no parameter storage.</td><td>Event-driven</td><td>T</td><td><code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-8b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-70b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[mistral-7b]</code></td><td>3/3 passed</td></tr>
 <tr><td><strong>SF-03</strong> For SwiGLU decoder configurations, the traced weight-matmul FLOPs of a prefill shall equal 2 × matmul parameters × tokens exactly.</td><td>Ubiquitous</td><td>T</td><td><code>test_properties.py::test_traced_matmul_flops_equal_closed_form</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-8b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[llama3-70b]</code>&lt;br&gt;<code>test_real_models.py::test_prefill_matmul_flops_equal_closed_form[mistral-7b]</code>&lt;br&gt;<code>test_real_models.py::test_qwen_biases_are_counted</code>&lt;br&gt;<code>test_real_models.py::test_matches_pytorch_flop_counter</code></td><td>6/6 passed</td></tr>
 <tr><td><strong>SF-04</strong> The four front ends shall report identical matmul FLOPs and weight bytes for the same model and input, apart from constant folding that is documented per case.</td><td>Ubiquitous</td><td>T</td><td><code>test_real_models.py::test_fake_cpu_gives_fused_attention_with_the_same_arithmetic</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_flops_and_weights[llama]</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_flops_and_weights[gpt2]</code>&lt;br&gt;<code>test_routes.py::test_routes_agree_on_the_meta_device</code></td><td>4/4 passed</td></tr>
-<tr><td><strong>SF-05</strong> When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the self-attention term (4 × layers × d_model per token).</td><td>Event-driven</td><td>T</td><td><code>test_real_models.py::test_decode_step_matches_closed_form_plus_self_attention</code></td><td>1/1 passed</td></tr>
+<tr><td><strong>SF-05</strong> When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the rotary-frequency matmul, and the traced weight bytes shall equal the closed form's per-step weight traffic plus the RMSNorm weights.</td><td>Event-driven</td><td>T</td><td><code>test_real_models.py::test_decode_step_matches_closed_form</code></td><td>1/1 passed</td></tr>
 <tr><td><strong>SF-06</strong> If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report.</td><td>Unwanted behaviour</td><td>T</td><td><code>test_coverage.py::test_unknown_operator_is_reported</code>&lt;br&gt;<code>test_coverage.py::test_rule_coverage_of_real_traces_is_complete</code>&lt;br&gt;<code>test_rules.py::test_unknown_ops_are_zero_and_visible</code></td><td>3/3 passed</td></tr>
 <tr><td><strong>SF-07</strong> When a model is exported to ONNX without weights, the front end shall recover the shape and parameter identity of every weight.</td><td>Event-driven</td><td>T</td><td><code>test_routes.py::test_onnx_export_runs_in_onnxruntime_and_matches_pytorch</code></td><td>1/1 passed</td></tr>
 <tr><td><strong>SF-08</strong> While the <code>torch.compile</code> backend is active, the user's program shall produce outputs identical to eager execution.</td><td>State-driven</td><td>T</td><td><code>test_routes.py::test_compile_backend_returns_correct_outputs</code></td><td>1/1 passed</td></tr>
@@ -1104,7 +1104,7 @@
             <tr><td>3. Requirements</td><td>ID, type, EARS pattern, text, verification method; one table</td><td>SF-01 to SF-17</td></tr>
             <tr><td>4. Fidelity</td><td>What is modelled, at what abstraction; what is not</td><td>In the README's "Not modelled"</td></tr>
             <tr><td>5. Assumptions and constraints</td><td>Versions, platforms, input limits</td><td>PyTorch 2.6+, batch-1 static shapes</td></tr>
-            <tr><td>6. Change history</td><td>Every change, with its reason</td><td>1.1: SF-15's method changed after the gap</td></tr>
+            <tr><td>6. Change history</td><td>Every change, with its reason</td><td>1.1: SF-15's method changed after the gap; 1.2: SF-05 reworded when the closed form it checks was corrected</td></tr>
         </tbody>
     </table></div>
     <p>The requirements table, as written (excerpt):</p>
@@ -1116,7 +1116,7 @@
 | SF-<span class="num">02</span> | Functional | Event-driven | When a model is traced on the meta device, the front end shall allocate no parameter storage. | T |
 | SF-<span class="num">03</span> | Functional | Ubiquitous | For SwiGLU decoder configurations, the traced weight-matmul FLOPs of a prefill shall equal <span class="num">2</span> × matmul parameters × tokens exactly. | T |
 | SF-<span class="num">04</span> | Functional | Ubiquitous | The four front ends shall report identical matmul FLOPs and weight bytes for the same model and input, apart from constant folding that is documented per case. | T |
-| SF-<span class="num">05</span> | Functional | Event-driven | When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the self-attention term (<span class="num">4</span> × layers × d_model per token). | T |
+| SF-<span class="num">05</span> | Functional | Event-driven | When a decode step is traced, the traced matmul FLOPs shall equal the closed form plus the rotary-frequency matmul, and the traced weight bytes shall equal the closed form's per-step weight traffic plus the RMSNorm weights. | T |
 | SF-<span class="num">06</span> | Functional | Unwanted behaviour | If an operator has no cost rule, then the front end shall cost it at zero and name it in the coverage report. | T |</code></pre>
     </div>
     <p>A row per requirement, in a file under version control next to the code, reviewed in the same pull request as the change it describes.</p>
@@ -1170,7 +1170,7 @@
 <tr><td>transformers</td><td>5.18.0</td></tr>
 <tr><td>onnx</td><td>1.23.1</td></tr>
 <tr><td>CPU</td><td>x86_64</td></tr>
-<tr><td>simfront commit</td><td>67f36ee</td></tr>
+<tr><td>simfront commit</td><td>cc64742</td></tr>
 </tbody></table></div>
     <p class="src">Source: <a href="https://github.com/BrendanJamesLynskey/Torch_Sim_Frontend/blob/main/examples/results.md">examples/results.md</a> in Torch_Sim_Frontend</p>
     <p>A report generated by a script can be regenerated after any model change, which is what keeps the numbers in decks and READMEs true. Timing results also need repeat runs and a statement of spread (<a href="https://brendanjameslynskey.github.io/SimEng_11_Performance_Analysis/">deck 11</a>).</p>
